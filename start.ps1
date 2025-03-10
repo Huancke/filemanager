@@ -48,11 +48,13 @@ if ($LASTEXITCODE -eq 0) {
             Write-Host "尝试直接启动应用程序（可能没有管理员权限）..." -ForegroundColor Yellow
             Start-Process $exePath
         }
-    } else {
+    } 
+    else {
         Write-Host "错误: 找不到可执行文件 $exePath" -ForegroundColor Red
         Write-Host "请检查编译输出目录是否正确。" -ForegroundColor Yellow
     }
-} else {
+} 
+else {
     Write-Host "编译失败!" -ForegroundColor Red
     Write-Host "请修复上述错误后重试。" -ForegroundColor Yellow
 } 
