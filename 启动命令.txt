@@ -1,4 +1,0 @@
-cd D:\Code\FileManager && dotnet run
-cd D:\Code\FileManager\bin\Debug\net8.0-windows && Start-Process FileManager.exe -Verb RunAs
-
-连续输入
