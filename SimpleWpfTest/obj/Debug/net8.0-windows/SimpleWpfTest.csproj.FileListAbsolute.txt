@@ -1,0 +1,15 @@
+D:\Code\FileManager\SimpleWpfTest\bin\Debug\net8.0-windows\SimpleWpfTest.exe
+D:\Code\FileManager\SimpleWpfTest\bin\Debug\net8.0-windows\SimpleWpfTest.deps.json
+D:\Code\FileManager\SimpleWpfTest\bin\Debug\net8.0-windows\SimpleWpfTest.runtimeconfig.json
+D:\Code\FileManager\SimpleWpfTest\bin\Debug\net8.0-windows\SimpleWpfTest.dll
+D:\Code\FileManager\SimpleWpfTest\bin\Debug\net8.0-windows\SimpleWpfTest.pdb
+D:\Code\FileManager\SimpleWpfTest\obj\Debug\net8.0-windows\SimpleWpfTest.GeneratedMSBuildEditorConfig.editorconfig
+D:\Code\FileManager\SimpleWpfTest\obj\Debug\net8.0-windows\SimpleWpfTest.AssemblyInfoInputs.cache
+D:\Code\FileManager\SimpleWpfTest\obj\Debug\net8.0-windows\SimpleWpfTest.AssemblyInfo.cs
+D:\Code\FileManager\SimpleWpfTest\obj\Debug\net8.0-windows\SimpleWpfTest.csproj.CoreCompileInputs.cache
+D:\Code\FileManager\SimpleWpfTest\obj\Debug\net8.0-windows\SimpleWpfTest.sourcelink.json
+D:\Code\FileManager\SimpleWpfTest\obj\Debug\net8.0-windows\SimpleWpfTest.dll
+D:\Code\FileManager\SimpleWpfTest\obj\Debug\net8.0-windows\refint\SimpleWpfTest.dll
+D:\Code\FileManager\SimpleWpfTest\obj\Debug\net8.0-windows\SimpleWpfTest.pdb
+D:\Code\FileManager\SimpleWpfTest\obj\Debug\net8.0-windows\SimpleWpfTest.genruntimeconfig.cache
+D:\Code\FileManager\SimpleWpfTest\obj\Debug\net8.0-windows\ref\SimpleWpfTest.dll
