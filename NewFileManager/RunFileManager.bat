@@ -1,0 +1,9 @@
+off
+echo
+正在启动文件管理器...
+cd
+/d
+D:\Code\FileManager\NewFileManager\FileManager\bin\Debug\net8.0-windows
+start
+FileManager.exe
+pause
