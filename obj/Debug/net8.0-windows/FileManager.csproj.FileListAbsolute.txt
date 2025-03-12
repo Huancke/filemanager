@@ -1,0 +1,4 @@
+D:\Code\FileManager\obj\Debug\net8.0-windows\MainWindow.g.cs
+D:\Code\FileManager\obj\Debug\net8.0-windows\App.g.cs
+D:\Code\FileManager\obj\Debug\net8.0-windows\FileManager_MarkupCompile.cache
+D:\Code\FileManager\obj\Debug\net8.0-windows\FileManager_MarkupCompile.lref
