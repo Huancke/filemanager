@@ -8,6 +8,6 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = SimpleWpfTest
-build_property.ProjectDir = D:\Code\FileManager\SimpleWpfTest\
+build_property.ProjectDir = d:\Code\FileManager\SimpleWpfTest\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 

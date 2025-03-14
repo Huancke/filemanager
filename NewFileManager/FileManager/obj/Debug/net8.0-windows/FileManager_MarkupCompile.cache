@@ -1,20 +1,20 @@
 ﻿FileManager
-
+1.0.0.0
 
 winexe
 C#
 .cs
-D:\Code\FileManager\NewFileManager\FileManager\obj\Debug\net8.0-windows\
+d:\Code\FileManager\NewFileManager\FileManager\obj\Debug\net8.0-windows\
 FileManager
 none
 false
 TRACE;DEBUG;NET;NET8_0;NETCOREAPP
-D:\Code\FileManager\NewFileManager\FileManager\App.xaml
+d:\Code\FileManager\NewFileManager\FileManager\App.xaml
 11407045341
 
-5-914953336
+7-875475740
 1981385397204
 MainWindow.xaml;
 
-False
+True
 
