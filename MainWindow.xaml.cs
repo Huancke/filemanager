@@ -1,5 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -9,195 +16,166 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.IO;
-using System.Diagnostics;
-using System.Threading.Tasks;
 using SimpleFileManager2.ViewModel;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
 
-namespace SimpleFileManager2;
-
-/// <summary>
-/// Interaction logic for MainWindow.xaml
-/// </summary>
-public partial class MainWindow : Window, INotifyPropertyChanged
+namespace SimpleFileManager2
 {
-    private FileManagerViewModel? _viewModel;
-    private readonly Stack<string> _pathHistory = new Stack<string>();
-    private readonly Stack<string> _forwardHistory = new Stack<string>();
-    private string _currentPath = string.Empty;
-    private ObservableCollection<FileItem> _fileItems = new ObservableCollection<FileItem>();
-
-    public string CurrentPath
+    /// <summary>
+    /// Interaction logic for MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : Window
     {
-        get => _currentPath;
-        set
-        {
-            if (_currentPath != value)
-            {
-                _currentPath = value;
-                OnPropertyChanged(nameof(CurrentPath));
-                PathTextBox.Text = value;
-            }
-        }
-    }
+        private FileManagerViewModel _viewModel;
 
-    public ObservableCollection<FileItem> FileItems
-    {
-        get => _fileItems;
-        set
+        public MainWindow()
         {
-            if (_fileItems != value)
+            try
             {
-                _fileItems = value;
-                OnPropertyChanged(nameof(FileItems));
-            }
-        }
-    }
-
-    public MainWindow()
-    {
-        try
-        {
-            Debug.WriteLine("开始初始化MainWindow");
-            InitializeComponent();
-            
-            Debug.WriteLine("InitializeComponent完成");
-            
-            // 确保UI线程异常被捕获
-            Application.Current.DispatcherUnhandledException += (s, e) => 
-            {
-                MessageBox.Show($"发生错误: {e.Exception.Message}\n\n{e.Exception.StackTrace}", 
-                    "错误", MessageBoxButton.OK, MessageBoxImage.Error);
-                e.Handled = true;
-            };
-            
-            Debug.WriteLine("创建ViewModel");
-            _viewModel = new FileManagerViewModel();
-            DataContext = _viewModel;
-            Debug.WriteLine("设置DataContext完成");
-            
-            // 设置事件处理
-            BackButton.Click += (s, e) => _viewModel.NavigateBack();
-            ForwardButton.Click += (s, e) => _viewModel.NavigateForward();
-            UpButton.Click += (s, e) => _viewModel.NavigateUp();
-            PathTextBox.KeyDown += PathTextBox_KeyDown;
-            FileListView.MouseDoubleClick += FileListView_MouseDoubleClick;
-            Debug.WriteLine("事件处理设置完成");
-            
-            // 确保窗口显示在前台
-            Loaded += MainWindow_Loaded;
-            
-            Debug.WriteLine("MainWindow初始化完成");
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"窗口初始化失败: {ex.Message}\n{ex.StackTrace}");
-            MessageBox.Show($"窗口初始化失败: {ex.Message}\n\n{ex.StackTrace}", 
-                "严重错误", MessageBoxButton.OK, MessageBoxImage.Error);
-        }
-    }
-
-    private void MainWindow_Loaded(object sender, RoutedEventArgs e)
-    {
-        try
-        {
-            Debug.WriteLine("MainWindow_Loaded事件触发");
-            
-            // 确保窗口显示在前台
-            Topmost = true;
-            Activate();
-            Focus();
-            
-            // 短暂延迟后取消Topmost，这样窗口不会一直保持在最前面
-            Task.Delay(1000).ContinueWith(_ => 
-            {
-                Dispatcher.Invoke(() => 
+                Debug.WriteLine("开始初始化MainWindow");
+                InitializeComponent();
+                
+                Debug.WriteLine("InitializeComponent完成");
+                
+                // 确保UI线程异常被捕获
+                Application.Current.DispatcherUnhandledException += (s, e) => 
                 {
-                    Topmost = false;
-                    Debug.WriteLine("取消Topmost设置");
-                });
-            });
-            
-            Debug.WriteLine("MainWindow_Loaded事件处理完成");
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"Loaded事件处理失败: {ex.Message}");
-        }
-    }
-
-    private void FileListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-    {
-        try
-        {
-            if (_viewModel != null && FileListView.SelectedItem is FileItem selectedItem && selectedItem.Type == "文件夹")
+                    MessageBox.Show($"发生错误: {e.Exception.Message}\n\n{e.Exception.StackTrace}", 
+                        "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                    e.Handled = true;
+                };
+                
+                Debug.WriteLine("创建ViewModel");
+                _viewModel = new FileManagerViewModel();
+                DataContext = _viewModel;
+                Debug.WriteLine("设置DataContext完成");
+                
+                // 确保窗口显示在前台
+                Loaded += MainWindow_Loaded;
+                
+                Debug.WriteLine("MainWindow初始化完成");
+            }
+            catch (Exception ex)
             {
-                string newPath = System.IO.Path.Combine(_viewModel.CurrentPath, selectedItem.Name);
-                _viewModel.NavigateTo(newPath);
+                Debug.WriteLine($"窗口初始化失败: {ex.Message}\n{ex.StackTrace}");
+                MessageBox.Show($"窗口初始化失败: {ex.Message}\n\n{ex.StackTrace}", 
+                    "严重错误", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-        catch (Exception ex)
+
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            Debug.WriteLine($"处理双击事件失败: {ex.Message}");
-            MessageBox.Show($"处理双击事件失败: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+            try
+            {
+                Debug.WriteLine("MainWindow_Loaded事件触发");
+                
+                // 确保窗口显示在前台
+                Topmost = true;
+                Activate();
+                Focus();
+                
+                // 短暂延迟后取消Topmost，这样窗口不会一直保持在最前面
+                Task.Delay(1000).ContinueWith(_ => 
+                {
+                    Dispatcher.Invoke(() => 
+                    {
+                        Topmost = false;
+                        Debug.WriteLine("取消Topmost设置");
+                    });
+                });
+                
+                Debug.WriteLine("MainWindow_Loaded事件处理完成");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Loaded事件处理失败: {ex.Message}");
+            }
         }
-    }
-    
-    private void CloseStatusButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (_viewModel != null)
+
+        private void FileListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                if (FileListView.SelectedItem is FileItem selectedItem)
+                {
+                    if (selectedItem.Type == "文件夹")
+                    {
+                        string newPath = System.IO.Path.Combine(_viewModel.CurrentPath, selectedItem.Name);
+                        _viewModel.NavigateTo(newPath);
+                    }
+                    else
+                    {
+                        try
+                        {
+                            string filePath = System.IO.Path.Combine(_viewModel.CurrentPath, selectedItem.Name);
+                            Process.Start(new ProcessStartInfo
+                            {
+                                FileName = filePath,
+                                UseShellExecute = true
+                            });
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show($"无法打开文件: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"处理双击事件失败: {ex.Message}");
+                MessageBox.Show($"处理双击事件失败: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+        
+        private void CloseStatusButton_Click(object sender, RoutedEventArgs e)
         {
             _viewModel.IsStatusVisible = false;
         }
-    }
 
-    private void PathTextBox_KeyDown(object sender, KeyEventArgs e)
-    {
-        if (e.Key == Key.Enter && _viewModel != null)
+        private void PathTextBox_KeyDown(object sender, KeyEventArgs e)
         {
-            _viewModel.NavigateTo(PathTextBox.Text);
+            if (e.Key == Key.Enter)
+            {
+                _viewModel.NavigateTo(PathTextBox.Text);
+            }
         }
-    }
 
-    private void HomeButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (_viewModel != null)
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            _viewModel.NavigateBack();
+        }
+
+        private void ForwardButton_Click(object sender, RoutedEventArgs e)
+        {
+            _viewModel.NavigateForward();
+        }
+
+        private void UpButton_Click(object sender, RoutedEventArgs e)
+        {
+            _viewModel.NavigateUp();
+        }
+
+        private void HomeButton_Click(object sender, RoutedEventArgs e)
         {
             _viewModel.NavigateTo(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
         }
-    }
 
-    private void RefreshButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (_viewModel != null)
+        private void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
             _viewModel.RefreshCurrentDirectory();
         }
-    }
 
-    private void NewFolderButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (_viewModel != null)
+        private void NewFolderButton_Click(object sender, RoutedEventArgs e)
         {
             _viewModel.CreateNewFolder();
         }
-    }
 
-    private void SearchButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (_viewModel != null)
+        private void SearchButton_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("搜索功能尚未实现", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
         }
-    }
 
-    private void SortButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (_viewModel != null)
+        private void SortButton_Click(object sender, RoutedEventArgs e)
         {
             var contextMenu = new ContextMenu();
             
@@ -219,11 +197,8 @@ public partial class MainWindow : Window, INotifyPropertyChanged
             
             contextMenu.IsOpen = true;
         }
-    }
 
-    private void ViewButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (_viewModel != null)
+        private void ViewButton_Click(object sender, RoutedEventArgs e)
         {
             var contextMenu = new ContextMenu();
             
@@ -241,27 +216,18 @@ public partial class MainWindow : Window, INotifyPropertyChanged
             
             contextMenu.IsOpen = true;
         }
-    }
 
-    private void DesktopButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (_viewModel != null)
+        private void DesktopButton_Click(object sender, RoutedEventArgs e)
         {
             _viewModel.NavigateToSpecialFolder(Environment.SpecialFolder.Desktop);
         }
-    }
 
-    private void DocumentsButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (_viewModel != null)
+        private void DocumentsButton_Click(object sender, RoutedEventArgs e)
         {
             _viewModel.NavigateToSpecialFolder(Environment.SpecialFolder.MyDocuments);
         }
-    }
 
-    private void DownloadsButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (_viewModel != null)
+        private void DownloadsButton_Click(object sender, RoutedEventArgs e)
         {
             string downloadsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
             if (Directory.Exists(downloadsPath))
@@ -273,123 +239,102 @@ public partial class MainWindow : Window, INotifyPropertyChanged
                 MessageBox.Show("下载文件夹不存在", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-    }
 
-    private void PicturesButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (_viewModel != null)
+        private void PicturesButton_Click(object sender, RoutedEventArgs e)
         {
             _viewModel.NavigateToSpecialFolder(Environment.SpecialFolder.MyPictures);
         }
-    }
 
-    private void MusicButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (_viewModel != null)
+        private void MusicButton_Click(object sender, RoutedEventArgs e)
         {
             _viewModel.NavigateToSpecialFolder(Environment.SpecialFolder.MyMusic);
         }
-    }
 
-    private void VideosButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (_viewModel != null)
+        private void VideosButton_Click(object sender, RoutedEventArgs e)
         {
             _viewModel.NavigateToSpecialFolder(Environment.SpecialFolder.MyVideos);
         }
-    }
 
-    private void ThisPCButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (_viewModel != null)
+        private void ThisPCButton_Click(object sender, RoutedEventArgs e)
         {
             // 显示所有驱动器
-            _viewModel.NavigateTo(Environment.GetFolderPath(Environment.SpecialFolder.MyComputer));
+            var drives = DriveInfo.GetDrives().Where(d => d.IsReady).ToList();
+            if (drives.Count > 0)
+            {
+                _viewModel.NavigateTo(drives[0].RootDirectory.FullName);
+            }
         }
-    }
 
-    private void CDriveButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (_viewModel != null)
+        private void CDriveButton_Click(object sender, RoutedEventArgs e)
         {
             _viewModel.NavigateToDrive("C");
         }
-    }
 
-    private void DDriveButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (_viewModel != null)
+        private void DDriveButton_Click(object sender, RoutedEventArgs e)
         {
             _viewModel.NavigateToDrive("D");
         }
-    }
 
-    // 右键菜单事件处理
-    private void OpenMenuItem_Click(object sender, RoutedEventArgs e)
-    {
-        if (_viewModel != null && FileListView.SelectedItem is FileItem selectedItem)
+        // 右键菜单事件处理
+        private void OpenMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            if (selectedItem.Type == "文件夹")
+            if (FileListView.SelectedItem is FileItem selectedItem)
             {
-                string newPath = System.IO.Path.Combine(_viewModel.CurrentPath, selectedItem.Name);
-                _viewModel.NavigateTo(newPath);
-            }
-            else
-            {
-                try
+                if (selectedItem.Type == "文件夹")
                 {
-                    string filePath = System.IO.Path.Combine(_viewModel.CurrentPath, selectedItem.Name);
-                    Process.Start(new ProcessStartInfo
+                    string newPath = System.IO.Path.Combine(_viewModel.CurrentPath, selectedItem.Name);
+                    _viewModel.NavigateTo(newPath);
+                }
+                else
+                {
+                    try
                     {
-                        FileName = filePath,
-                        UseShellExecute = true
-                    });
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"无法打开文件: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                        string filePath = System.IO.Path.Combine(_viewModel.CurrentPath, selectedItem.Name);
+                        Process.Start(new ProcessStartInfo
+                        {
+                            FileName = filePath,
+                            UseShellExecute = true
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"无法打开文件: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
             }
         }
-    }
 
-    private void CopyMenuItem_Click(object sender, RoutedEventArgs e)
-    {
-        MessageBox.Show("复制功能尚未实现", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
-    }
-
-    private void CutMenuItem_Click(object sender, RoutedEventArgs e)
-    {
-        MessageBox.Show("剪切功能尚未实现", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
-    }
-
-    private void PasteMenuItem_Click(object sender, RoutedEventArgs e)
-    {
-        MessageBox.Show("粘贴功能尚未实现", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
-    }
-
-    private void DeleteMenuItem_Click(object sender, RoutedEventArgs e)
-    {
-        if (_viewModel != null && _viewModel.DeleteCommand.CanExecute(FileListView.SelectedItems))
+        private void CopyMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            _viewModel.DeleteCommand.Execute(FileListView.SelectedItems);
+            MessageBox.Show("复制功能尚未实现", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
         }
-    }
 
-    private void RenameMenuItem_Click(object sender, RoutedEventArgs e)
-    {
-        MessageBox.Show("重命名功能尚未实现", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
-    }
+        private void CutMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("剪切功能尚未实现", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
 
-    private void PropertiesMenuItem_Click(object sender, RoutedEventArgs e)
-    {
-        MessageBox.Show("属性功能尚未实现", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
-    }
+        private void PasteMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("粘贴功能尚未实现", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
 
-    public event PropertyChangedEventHandler? PropertyChanged;
+        private void DeleteMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (_viewModel.DeleteCommand.CanExecute(FileListView.SelectedItems))
+            {
+                _viewModel.DeleteCommand.Execute(FileListView.SelectedItems);
+            }
+        }
 
-    protected virtual void OnPropertyChanged(string propertyName)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        private void RenameMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("重命名功能尚未实现", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void PropertiesMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("属性功能尚未实现", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
     }
 }
