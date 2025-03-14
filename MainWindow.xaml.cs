@@ -189,7 +189,21 @@ public partial class MainWindow : Window
     {
         if (_viewModel != null)
         {
-            MessageBox.Show("视图切换功能尚未实现", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+            var contextMenu = new ContextMenu();
+            
+            var listMenuItem = new MenuItem { Header = "列表" };
+            listMenuItem.Click += (s, args) => _viewModel.CurrentViewMode = FileManagerViewModel.ViewMode.List;
+            contextMenu.Items.Add(listMenuItem);
+            
+            var detailsMenuItem = new MenuItem { Header = "详细信息" };
+            detailsMenuItem.Click += (s, args) => _viewModel.CurrentViewMode = FileManagerViewModel.ViewMode.Details;
+            contextMenu.Items.Add(detailsMenuItem);
+            
+            var tilesMenuItem = new MenuItem { Header = "平铺" };
+            tilesMenuItem.Click += (s, args) => _viewModel.CurrentViewMode = FileManagerViewModel.ViewMode.Tiles;
+            contextMenu.Items.Add(tilesMenuItem);
+            
+            contextMenu.IsOpen = true;
         }
     }
 
