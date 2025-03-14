@@ -76,17 +76,17 @@
         <Border Grid.Row="1" Background="#F0F0F0" BorderBrush="#DDDDDD" BorderThickness="0,0,0,1">
             <StackPanel Orientation="Horizontal" Margin="5,2">
                 <!-- 导航按钮 -->
-                <Button x:Name="BackButton" ToolTip="后退" Style="{StaticResource ToolbarButtonStyle}">
+                <Button x:Name="BackButton" ToolTip="后退" Style="{StaticResource ToolbarButtonStyle}" Click="BackButton_Click">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="←" FontSize="14" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
-                <Button x:Name="ForwardButton" ToolTip="前进" Style="{StaticResource ToolbarButtonStyle}">
+                <Button x:Name="ForwardButton" ToolTip="前进" Style="{StaticResource ToolbarButtonStyle}" Click="ForwardButton_Click">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="→" FontSize="14" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
-                <Button x:Name="UpButton" ToolTip="向上" Style="{StaticResource ToolbarButtonStyle}">
+                <Button x:Name="UpButton" ToolTip="向上" Style="{StaticResource ToolbarButtonStyle}" Click="UpButton_Click">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="↑" FontSize="14" VerticalAlignment="Center"/>
                     </StackPanel>
