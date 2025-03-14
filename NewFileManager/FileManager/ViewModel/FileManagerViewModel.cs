@@ -85,7 +85,6 @@ namespace FileManager.ViewModel
 
         public FileManagerViewModel()
         {
-            DeleteCommand = new RelayCommand(DeleteSelectedFiles);
             _statusTimer = new DispatcherTimer
             {
                 Interval = TimeSpan.FromSeconds(5)
@@ -103,7 +102,7 @@ namespace FileManager.ViewModel
                 IsStatusVisible = true;
                 
                 // 初始化命令
-                DeleteCommand = new RelayCommand(DeleteSelectedItems, CanDelete);
+                DeleteCommand = new RelayCommand(DeleteSelectedItems);
                 
                 // 设置初始路径
                 CurrentPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
