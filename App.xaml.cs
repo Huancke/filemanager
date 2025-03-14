@@ -1,4 +1,5 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
 using System.Data;
 using System.Windows;
 using System.Diagnostics;
@@ -6,7 +7,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 
-namespace FileManager;
+namespace SimpleFileManager2;
 
 /// <summary>
 /// Interaction logic for App.xaml
