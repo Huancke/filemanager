@@ -10,7 +10,7 @@
         <!-- 名称列模板 -->
         <DataTemplate x:Key="NameColumnTemplate">
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="{Binding Type, Converter={StaticResource TypeToIconConverter}}" 
+                <TextBlock Text="{Binding Icon}" 
                            FontSize="16" Margin="0,0,5,0"/>
                 <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
             </StackPanel>
@@ -19,7 +19,7 @@
         <!-- 平铺视图模板 -->
         <DataTemplate x:Key="TileColumnTemplate">
             <StackPanel Width="100" Height="100" Margin="5">
-                <TextBlock Text="{Binding Type, Converter={StaticResource TypeToIconConverter}}" 
+                <TextBlock Text="{Binding Icon}" 
                            FontSize="32" HorizontalAlignment="Center" Margin="0,10"/>
                 <TextBlock Text="{Binding Name}" TextWrapping="Wrap" TextAlignment="Center"
                            HorizontalAlignment="Center" MaxWidth="90"/>
