@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET8_0;NETCOREAPP
 D:\Code\FileManager\App.xaml
-11407045341
+3755637243
 
-14-1413011859
+32-452652245
 1981385397204
-MainWindow.xaml;
+MainWindow.xaml;NewFileManager\FileManager\App.xaml;NewFileManager\FileManager\MainWindow.xaml;
 
 True
 
