@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
+using System.Windows.Controls;
+using System.Windows.Data;
 
 namespace FileManager.ViewModel
 {
@@ -41,6 +43,88 @@ namespace FileManager.ViewModel
         private readonly DispatcherTimer _statusTimer;
         private string _sortProperty = "Name";
         private bool _sortAscending = true;
+        private ViewMode _currentViewMode = ViewMode.Details;
+        
+        public enum ViewMode
+        {
+            List,
+            Details,
+            Tiles
+        }
+        
+        public ViewMode CurrentViewMode
+        {
+            get => _currentViewMode;
+            set
+            {
+                if (_currentViewMode != value)
+                {
+                    _currentViewMode = value;
+                    OnPropertyChanged(nameof(CurrentViewMode));
+                    OnPropertyChanged(nameof(CurrentView));
+                }
+            }
+        }
+        
+        public GridView CurrentView
+        {
+            get
+            {
+                var view = new GridView();
+                switch (CurrentViewMode)
+                {
+                    case ViewMode.List:
+                        view.Columns.Add(new GridViewColumn
+                        {
+                            Header = "名称",
+                            Width = 400,
+                            CellTemplate = Application.Current.FindResource("NameColumnTemplate") as DataTemplate
+                        });
+                        break;
+                    case ViewMode.Tiles:
+                        view.Columns.Add(new GridViewColumn
+                        {
+                            Width = 120,
+                            CellTemplate = Application.Current.FindResource("TileColumnTemplate") as DataTemplate
+                        });
+                        break;
+                    case ViewMode.Details:
+                    default:
+                        view.Columns.Add(new GridViewColumn
+                        {
+                            Header = "名称",
+                            Width = 250,
+                            CellTemplate = Application.Current.FindResource("NameColumnTemplate") as DataTemplate
+                        });
+                        view.Columns.Add(new GridViewColumn
+                        {
+                            Header = "修改日期",
+                            Width = 150,
+                            DisplayMemberBinding = new Binding("ModifiedDate")
+                        });
+                        view.Columns.Add(new GridViewColumn
+                        {
+                            Header = "类型",
+                            Width = 100,
+                            DisplayMemberBinding = new Binding("Type")
+                        });
+                        view.Columns.Add(new GridViewColumn
+                        {
+                            Header = "大小",
+                            Width = 100,
+                            DisplayMemberBinding = new Binding("Size")
+                        });
+                        view.Columns.Add(new GridViewColumn
+                        {
+                            Header = "系统文件",
+                            Width = 80,
+                            CellTemplate = Application.Current.FindResource("SystemFileColumnTemplate") as DataTemplate
+                        });
+                        break;
+                }
+                return view;
+            }
+        }
 
         public ObservableCollection<FileItem> FileItems { get; } = new ObservableCollection<FileItem>();
 
