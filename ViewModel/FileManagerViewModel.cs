@@ -27,6 +27,7 @@ namespace FileManager.ViewModel
     public class FileManagerViewModel : INotifyPropertyChanged
     {
         private readonly Stack<string> _pathHistory = new Stack<string>();
+        private readonly Stack<string> _forwardHistory = new Stack<string>();
         private static readonly EnumerationOptions FileEnumOptions = new EnumerationOptions
         {
             AttributesToSkip = FileAttributes.Normal,
@@ -38,6 +39,8 @@ namespace FileManager.ViewModel
         private string _statusMessage = string.Empty;
         private bool _isStatusVisible = false;
         private readonly DispatcherTimer _statusTimer;
+        private string _sortProperty = "Name";
+        private bool _sortAscending = true;
 
         public ObservableCollection<FileItem> FileItems { get; } = new ObservableCollection<FileItem>();
 
@@ -51,6 +54,7 @@ namespace FileManager.ViewModel
                     if (!string.IsNullOrEmpty(_currentPath))
                     {
                         _pathHistory.Push(_currentPath);
+                        _forwardHistory.Clear(); // 清除前进历史
                     }
                     _currentPath = value;
                     OnPropertyChanged(nameof(CurrentPath));
@@ -85,6 +89,11 @@ namespace FileManager.ViewModel
         }
 
         public ICommand DeleteCommand { get; }
+        public ICommand RefreshCommand { get; }
+        public ICommand NavigateUpCommand { get; }
+        public ICommand NavigateForwardCommand { get; }
+        public ICommand CreateFolderCommand { get; }
+        public ICommand SortCommand { get; }
 
         public FileManagerViewModel()
         {
@@ -106,6 +115,11 @@ namespace FileManager.ViewModel
                 
                 // 初始化命令
                 DeleteCommand = new RelayCommand(DeleteSelectedItems, CanDelete);
+                RefreshCommand = new RelayCommand(_ => RefreshCurrentDirectory());
+                NavigateUpCommand = new RelayCommand(_ => NavigateUp());
+                NavigateForwardCommand = new RelayCommand(_ => NavigateForward(), _ => _forwardHistory.Count > 0);
+                CreateFolderCommand = new RelayCommand(_ => CreateNewFolder());
+                SortCommand = new RelayCommand(SortItems);
                 
                 // 设置初始路径
                 CurrentPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
@@ -438,10 +452,233 @@ namespace FileManager.ViewModel
 
         public void NavigateBack()
         {
-            if (_pathHistory.TryPop(out var previousPath))
+            if (_pathHistory.Count > 0)
             {
-                CurrentPath = previousPath;
+                string previousPath = _pathHistory.Pop();
+                _forwardHistory.Push(_currentPath); // 保存当前路径到前进历史
+                _currentPath = previousPath;
+                OnPropertyChanged(nameof(CurrentPath));
                 LoadCurrentDirectory();
+            }
+        }
+
+        public void NavigateForward()
+        {
+            if (_forwardHistory.Count > 0)
+            {
+                string nextPath = _forwardHistory.Pop();
+                _pathHistory.Push(_currentPath); // 保存当前路径到后退历史
+                _currentPath = nextPath;
+                OnPropertyChanged(nameof(CurrentPath));
+                LoadCurrentDirectory();
+            }
+        }
+
+        public void NavigateUp()
+        {
+            try
+            {
+                DirectoryInfo parent = Directory.GetParent(CurrentPath);
+                if (parent != null)
+                {
+                    NavigateTo(parent.FullName);
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowError($"无法导航到上级目录: {ex.Message}");
+            }
+        }
+
+        public void RefreshCurrentDirectory()
+        {
+            LoadCurrentDirectory();
+        }
+
+        public void NavigateToSpecialFolder(Environment.SpecialFolder folder)
+        {
+            try
+            {
+                string path = Environment.GetFolderPath(folder);
+                if (Directory.Exists(path))
+                {
+                    NavigateTo(path);
+                }
+                else
+                {
+                    ShowError($"无法访问特殊文件夹: {folder}");
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowError($"导航到特殊文件夹失败: {ex.Message}");
+            }
+        }
+
+        public void NavigateToDrive(string driveLetter)
+        {
+            try
+            {
+                string path = $"{driveLetter}:\\";
+                if (Directory.Exists(path))
+                {
+                    NavigateTo(path);
+                }
+                else
+                {
+                    ShowError($"无法访问驱动器: {driveLetter}");
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowError($"导航到驱动器失败: {ex.Message}");
+            }
+        }
+
+        public void CreateNewFolder()
+        {
+            try
+            {
+                int counter = 1;
+                string baseName = "新建文件夹";
+                string newFolderName = baseName;
+                string newFolderPath = Path.Combine(CurrentPath, newFolderName);
+
+                // 检查是否已存在同名文件夹，如果存在则添加数字后缀
+                while (Directory.Exists(newFolderPath))
+                {
+                    counter++;
+                    newFolderName = $"{baseName} ({counter})";
+                    newFolderPath = Path.Combine(CurrentPath, newFolderName);
+                }
+
+                // 创建新文件夹
+                Directory.CreateDirectory(newFolderPath);
+                ShowStatus($"已创建文件夹: {newFolderName}");
+
+                // 刷新当前目录
+                RefreshCurrentDirectory();
+            }
+            catch (Exception ex)
+            {
+                ShowError($"创建文件夹失败: {ex.Message}");
+            }
+        }
+
+        private void SortItems(object parameter)
+        {
+            string property = parameter as string ?? "Name";
+            
+            // 如果点击相同的属性，则切换排序方向
+            if (property == _sortProperty)
+            {
+                _sortAscending = !_sortAscending;
+            }
+            else
+            {
+                _sortProperty = property;
+                _sortAscending = true;
+            }
+            
+            // 创建一个临时列表进行排序
+            List<FileItem> sortedItems = new List<FileItem>(FileItems);
+            
+            // 根据属性和排序方向进行排序
+            switch (_sortProperty)
+            {
+                case "Name":
+                    sortedItems = _sortAscending 
+                        ? sortedItems.OrderBy(f => f.Type).ThenBy(f => f.Name).ToList()
+                        : sortedItems.OrderBy(f => f.Type).ThenByDescending(f => f.Name).ToList();
+                    break;
+                case "Size":
+                    sortedItems = _sortAscending 
+                        ? sortedItems.OrderBy(f => f.Type).ThenBy(f => GetSizeValue(f.Size)).ToList()
+                        : sortedItems.OrderBy(f => f.Type).ThenByDescending(f => GetSizeValue(f.Size)).ToList();
+                    break;
+                case "Type":
+                    sortedItems = _sortAscending 
+                        ? sortedItems.OrderBy(f => f.Type).ToList()
+                        : sortedItems.OrderByDescending(f => f.Type).ToList();
+                    break;
+                case "ModifiedDate":
+                    sortedItems = _sortAscending 
+                        ? sortedItems.OrderBy(f => f.Type).ThenBy(f => GetDateValue(f.ModifiedDate)).ToList()
+                        : sortedItems.OrderBy(f => f.Type).ThenByDescending(f => GetDateValue(f.ModifiedDate)).ToList();
+                    break;
+            }
+            
+            // 清除并重新添加排序后的项目
+            FileItems.Clear();
+            foreach (var item in sortedItems)
+            {
+                FileItems.Add(item);
+            }
+            
+            ShowStatus($"已按{GetSortPropertyDisplayName(_sortProperty)}{(_sortAscending ? "升序" : "降序")}排序");
+        }
+        
+        private string GetSortPropertyDisplayName(string property)
+        {
+            return property switch
+            {
+                "Name" => "名称",
+                "Size" => "大小",
+                "Type" => "类型",
+                "ModifiedDate" => "修改日期",
+                _ => property
+            };
+        }
+        
+        private long GetSizeValue(string sizeStr)
+        {
+            if (sizeStr == "计算中..." || sizeStr == "N/A")
+                return 0;
+            
+            // 尝试解析大小字符串
+            try
+            {
+                if (sizeStr.Contains("KB"))
+                {
+                    double kb = double.Parse(sizeStr.Replace("KB", "").Trim());
+                    return (long)(kb * 1024);
+                }
+                else if (sizeStr.Contains("MB"))
+                {
+                    double mb = double.Parse(sizeStr.Replace("MB", "").Trim());
+                    return (long)(mb * 1024 * 1024);
+                }
+                else if (sizeStr.Contains("GB"))
+                {
+                    double gb = double.Parse(sizeStr.Replace("GB", "").Trim());
+                    return (long)(gb * 1024 * 1024 * 1024);
+                }
+                else if (sizeStr.Contains("B"))
+                {
+                    return long.Parse(sizeStr.Replace("B", "").Trim());
+                }
+            }
+            catch
+            {
+                // 解析失败，返回0
+                return 0;
+            }
+            
+            return 0;
+        }
+        
+        private DateTime GetDateValue(string dateStr)
+        {
+            if (dateStr == "N/A")
+                return DateTime.MinValue;
+            
+            try
+            {
+                return DateTime.Parse(dateStr);
+            }
+            catch
+            {
+                return DateTime.MinValue;
             }
         }
 
