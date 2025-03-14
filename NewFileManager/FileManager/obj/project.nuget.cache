@@ -1,14 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "KPPQ3PGqo3I+ArzNTp8A56vEMdCuBLMFcHbnMFm+L3RSJ10Ea6EllJbPxNf/wqHQ+QHZMrqCTdSK9WTxj/eLfg==",
+  "dgSpecHash": "ckodm1gL71oV1OzvF3aed+Z9bcB0lkFdQubCMgRVEdoOyyVnUetBV8TZ1k/c1X0nmnbk99MmqRIIbnYzR2o+yw==",
   "success": true,
   "projectFilePath": "D:\\Code\\FileManager\\NewFileManager\\FileManager\\FileManager.csproj",
-  "expectedPackageFiles": [
-    "C:\\Users\\huancke\\.nuget\\packages\\microsoft.net.illink.tasks\\8.0.6\\microsoft.net.illink.tasks.8.0.6.nupkg.sha512",
-    "C:\\Users\\huancke\\.nuget\\packages\\microsoft.netcore.app.runtime.win-x64\\8.0.6\\microsoft.netcore.app.runtime.win-x64.8.0.6.nupkg.sha512",
-    "C:\\Users\\huancke\\.nuget\\packages\\microsoft.windowsdesktop.app.runtime.win-x64\\8.0.6\\microsoft.windowsdesktop.app.runtime.win-x64.8.0.6.nupkg.sha512",
-    "C:\\Users\\huancke\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.win-x64\\8.0.6\\microsoft.aspnetcore.app.runtime.win-x64.8.0.6.nupkg.sha512",
-    "C:\\Users\\huancke\\.nuget\\packages\\microsoft.netcore.app.crossgen2.win-x64\\8.0.6\\microsoft.netcore.app.crossgen2.win-x64.8.0.6.nupkg.sha512"
-  ],
+  "expectedPackageFiles": [],
   "logs": []
 }
