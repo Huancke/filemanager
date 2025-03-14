@@ -18,7 +18,10 @@ namespace FileManager.ViewModel
         public string Name { get; set; } = string.Empty;
         public string Type { get; set; } = string.Empty;
         public string Size { get; set; } = string.Empty;
+        public string ModifiedDate { get; set; } = string.Empty;
         public bool IsSystemFile { get; set; }
+        public string FullPath { get; set; } = string.Empty;
+        public FileAttributes Attributes { get; set; }
     }
 
     public class FileManagerViewModel : INotifyPropertyChanged
@@ -175,7 +178,9 @@ namespace FileManager.ViewModel
                                 Name = Path.GetFileName(entry),
                                 Type = isDirectory ? "文件夹" : "文件",
                                 Size = "计算中...",
-                                IsSystemFile = isSystem
+                                IsSystemFile = isSystem,
+                                FullPath = entry,
+                                Attributes = attr
                             };
 
                             FileItems.Add(fileItem);
@@ -194,7 +199,9 @@ namespace FileManager.ViewModel
                                 Name = Path.GetFileName(entry) + " (访问受限)",
                                 Type = "错误",
                                 Size = "N/A",
-                                IsSystemFile = true
+                                IsSystemFile = true,
+                                FullPath = entry,
+                                Attributes = attr
                             });
                         }
                     }
