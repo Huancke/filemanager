@@ -239,6 +239,90 @@ namespace FileManager.ViewModel
             _statusTimer.Stop();
         }
 
+        private async Task UpdateFileSizeAsync(string path, FileItem fileItem, bool isDirectory)
+        {
+            try
+            {
+                if (isDirectory)
+                {
+                    fileItem.Size = "计算中...";
+                    var size = await Task.Run(() => CalculateDirectorySize(path));
+                    fileItem.Size = FormatFileSize(size);
+                }
+                else
+                {
+                    var fileInfo = new FileInfo(path);
+                    fileItem.Size = FormatFileSize(fileInfo.Length);
+                }
+            }
+            catch (Exception ex)
+            {
+                fileItem.Size = "无法计算";
+                Debug.WriteLine($"计算大小失败: {path}, 错误: {ex.Message}");
+            }
+        }
+
+        private long CalculateDirectorySize(string path)
+        {
+            try
+            {
+                return Directory.GetFiles(path, "*", SearchOption.AllDirectories)
+                    .Sum(file => new FileInfo(file).Length);
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
+        }
+
+        private string FormatFileSize(long bytes)
+        {
+            string[] sizes = { "B", "KB", "MB", "GB", "TB" };
+            int order = 0;
+            double size = bytes;
+
+            while (size >= 1024 && order < sizes.Length - 1)
+            {
+                order++;
+                size = size / 1024;
+            }
+
+            return $"{size:0.##} {sizes[order]}";
+        }
+
+        private bool IsRunAsAdmin()
+        {
+            using var identity = WindowsIdentity.GetCurrent();
+            var principal = new WindowsPrincipal(identity);
+            return principal.IsInRole(WindowsBuiltInRole.Administrator);
+        }
+
+        private void RequestAdminPrivilege()
+        {
+            try
+            {
+                var startInfo = new ProcessStartInfo
+                {
+                    UseShellExecute = true,
+                    FileName = Process.GetCurrentProcess().MainModule?.FileName,
+                    Verb = "runas"
+                };
+
+                Process.Start(startInfo);
+                Application.Current.Shutdown();
+            }
+            catch (Exception ex)
+            {
+                ShowError($"无法以管理员权限启动: {ex.Message}");
+            }
+        }
+
+        private void DeleteSelectedItems(object? parameter)
+        {
+            // 待实现
+            ShowStatus("删除功能尚未实现");
+        }
+
         public event PropertyChangedEventHandler? PropertyChanged;
 
         protected virtual void OnPropertyChanged(string propertyName)
