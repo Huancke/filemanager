@@ -1,10 +1,10 @@
-﻿<Window x:Class="FileManager.MainWindow"
+﻿<Window x:Class="SimpleFileManager2.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:FileManager"
-        xmlns:vm="clr-namespace:FileManager.ViewModel"
+        xmlns:local="clr-namespace:SimpleFileManager2"
+        xmlns:vm="clr-namespace:SimpleFileManager2.ViewModel"
         mc:Ignorable="d"
         Title="文件管理器" Height="600" Width="1000"
         WindowStartupLocation="CenterScreen">
