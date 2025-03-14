@@ -264,8 +264,7 @@
                 
                 <!-- 文件列表 -->
                 <ListView Grid.Row="1" x:Name="FileListView" Margin="5" SelectionMode="Extended"
-                          ItemsSource="{Binding FileItems}" MouseDoubleClick="FileListView_MouseDoubleClick"
-                          View="{Binding CurrentView}">
+                          ItemsSource="{Binding FileItems}" MouseDoubleClick="FileListView_MouseDoubleClick">
                     <ListView.Resources>
                         <!-- 列表视图样式 -->
                         <Style x:Key="ListViewItemStyle" TargetType="ListViewItem">
