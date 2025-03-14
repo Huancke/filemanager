@@ -12,16 +12,51 @@ using System.IO;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using FileManager.ViewModel;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
 
 namespace FileManager;
 
 /// <summary>
 /// Interaction logic for MainWindow.xaml
 /// </summary>
-public partial class MainWindow : Window
+public partial class MainWindow : Window, INotifyPropertyChanged
 {
     private FileManagerViewModel? _viewModel;
-    
+    private readonly Stack<string> _pathHistory = new Stack<string>();
+    private readonly Stack<string> _forwardHistory = new Stack<string>();
+    private string _currentPath = string.Empty;
+    private ObservableCollection<FileItem> _fileItems = new ObservableCollection<FileItem>();
+
+    public string CurrentPath
+    {
+        get => _currentPath;
+        set
+        {
+            if (_currentPath != value)
+            {
+                _currentPath = value;
+                OnPropertyChanged(nameof(CurrentPath));
+                PathTextBox.Text = value;
+            }
+        }
+    }
+
+    public ObservableCollection<FileItem> FileItems
+    {
+        get => _fileItems;
+        set
+        {
+            if (_fileItems != value)
+            {
+                _fileItems = value;
+                OnPropertyChanged(nameof(FileItems));
+            }
+        }
+    }
+
     public MainWindow()
     {
         try
@@ -295,14 +330,14 @@ public partial class MainWindow : Window
         {
             if (selectedItem.Type == "文件夹")
             {
-                string newPath = Path.Combine(_viewModel.CurrentPath, selectedItem.Name);
+                string newPath = System.IO.Path.Combine(_viewModel.CurrentPath, selectedItem.Name);
                 _viewModel.NavigateTo(newPath);
             }
             else
             {
                 try
                 {
-                    string filePath = Path.Combine(_viewModel.CurrentPath, selectedItem.Name);
+                    string filePath = System.IO.Path.Combine(_viewModel.CurrentPath, selectedItem.Name);
                     Process.Start(new ProcessStartInfo
                     {
                         FileName = filePath,
@@ -348,5 +383,12 @@ public partial class MainWindow : Window
     private void PropertiesMenuItem_Click(object sender, RoutedEventArgs e)
     {
         MessageBox.Show("属性功能尚未实现", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected virtual void OnPropertyChanged(string propertyName)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }
