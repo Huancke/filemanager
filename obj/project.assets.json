@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Code\\FileManager\\FileManager.csproj",
-      "projectName": "FileManager",
-      "projectPath": "D:\\Code\\FileManager\\FileManager.csproj",
+      "projectUniqueName": "D:\\Code\\SimpleFileManager2\\SimpleFileManager2.csproj",
+      "projectName": "SimpleFileManager2",
+      "projectPath": "D:\\Code\\SimpleFileManager2\\SimpleFileManager2.csproj",
       "packagesPath": "C:\\Users\\huancke\\.nuget\\packages\\",
-      "outputPath": "D:\\Code\\FileManager\\obj\\",
+      "outputPath": "D:\\Code\\SimpleFileManager2\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\huancke\\AppData\\Roaming\\NuGet\\NuGet.Config"

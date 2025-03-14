@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "SNEwdfw2wy4uDY3DVCAbVjYTe26bcLfjfvCmhsJzLuGWvVl9Zj+7B5pXfdr4d2g+ylqVBcIYCcgYj9eH80tYQg==",
+  "dgSpecHash": "FMCoP6L3TqUq3rO6PyFXb4WQp4KQNjY2s8ytnHnKW4bjdWXebZOF4fVrpBU2ALKg9USzoO4g8QhVqigu8rbPkg==",
   "success": true,
-  "projectFilePath": "D:\\Code\\FileManager\\FileManager.csproj",
+  "projectFilePath": "D:\\Code\\SimpleFileManager2\\SimpleFileManager2.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }
