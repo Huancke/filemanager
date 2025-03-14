@@ -47,6 +47,8 @@ public partial class App : Application
         Debug.WriteLine("App构造函数完成");
     }
     
+    // 注释掉OnStartup方法，因为我们已经在App.xaml中设置了StartupUri
+    /*
     protected override void OnStartup(StartupEventArgs e)
     {
         Debug.WriteLine("App.OnStartup开始");
@@ -64,6 +66,7 @@ public partial class App : Application
         LogInfo("应用程序OnStartup");
         Debug.WriteLine("App.OnStartup完成");
     }
+    */
     
     private void LogInfo(string message)
     {
