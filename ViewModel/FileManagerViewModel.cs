@@ -172,12 +172,17 @@ namespace FileManager.ViewModel
                             var attr = File.GetAttributes(entry);
                             var isDirectory = (attr & FileAttributes.Directory) == FileAttributes.Directory;
                             var isSystem = (attr & FileAttributes.System) == FileAttributes.System;
+                            
+                            // 获取文件或目录的修改日期
+                            DateTime modifiedTime = File.GetLastWriteTime(entry);
+                            string modifiedDateStr = modifiedTime.ToString("yyyy/MM/dd HH:mm");
 
                             var fileItem = new FileItem
                             {
                                 Name = Path.GetFileName(entry),
                                 Type = isDirectory ? "文件夹" : "文件",
                                 Size = "计算中...",
+                                ModifiedDate = modifiedDateStr,
                                 IsSystemFile = isSystem,
                                 FullPath = entry,
                                 Attributes = attr
@@ -199,9 +204,9 @@ namespace FileManager.ViewModel
                                 Name = Path.GetFileName(entry) + " (访问受限)",
                                 Type = "错误",
                                 Size = "N/A",
+                                ModifiedDate = "N/A",
                                 IsSystemFile = true,
-                                FullPath = entry,
-                                Attributes = attr
+                                FullPath = entry
                             });
                         }
                     }
