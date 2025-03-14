@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -11,13 +12,13 @@ using System.Windows.Shapes;
 using System.IO;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using FileManager.ViewModel;
+using SimpleFileManager2.ViewModel;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 
-namespace FileManager;
+namespace SimpleFileManager2;
 
 /// <summary>
 /// Interaction logic for MainWindow.xaml
