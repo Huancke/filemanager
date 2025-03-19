@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>FileManager</RootNamespace>
+    <AssemblyName>filemanager_beta0.3</AssemblyName>
+  </PropertyGroup>
+
+  <!-- 搜索图标资源 -->
+  <ItemGroup>
+    <Resource Include="FileManager\search.png" />
+  </ItemGroup>
+
+  <!-- 复制Everything插件到输出目录 -->
+  <Target Name="CopyEverythingPlugin" AfterTargets="AfterBuild">
+    <PropertyGroup>
+      <PluginSourceDir>D:\Code\FileManager\plugin_Everything\</PluginSourceDir>
+      <PluginDestDir>$(OutputPath)plugin_Everything\</PluginDestDir>
+    </PropertyGroup>
+    <Message Text="正在复制Everything插件文件..." Importance="high" />
+    <MakeDir Directories="$(PluginDestDir)" Condition="!Exists('$(PluginDestDir)')" />
+    <Copy SourceFiles="$(PluginSourceDir)Everything.exe" DestinationFolder="$(PluginDestDir)" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="$(PluginSourceDir)Everything.ini" DestinationFolder="$(PluginDestDir)" SkipUnchangedFiles="true" Condition="Exists('$(PluginSourceDir)Everything.ini')" />
+    <Copy SourceFiles="$(PluginSourceDir)Everything.lng" DestinationFolder="$(PluginDestDir)" SkipUnchangedFiles="true" Condition="Exists('$(PluginSourceDir)Everything.lng')" />
+  </Target>
+
+</Project>
